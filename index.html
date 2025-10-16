@@ -1,0 +1,1600 @@
+<!DOCTYPE html>
+<html class="dark" lang="en">
+
+<head>
+    <meta charset="utf-8" />
+    <meta content="width=device-width, initial-scale=1.0" name="viewport" />
+    <title>Quantivision - Powering the Future of Intelligent Systems</title>
+    <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/gsap@3.12.2/dist/gsap.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/gsap@3.12.2/dist/ScrollTrigger.min.js"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined" rel="stylesheet" />
+    <link href="https://fonts.googleapis.com" rel="preconnect" />
+    <link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect" />
+    <link
+        href="https://fonts.googleapis.com/css2?family=Orbitron:wght@700&amp;family=Space+Grotesk:wght@400;500;700&amp;display=swap"
+        rel="stylesheet" />
+    <script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    colors: {
+                        "primary": "#00BFFF",
+                        "background-light": "#f5f7f8",
+                        "background-dark": "#0A0A1A",
+                        "electric-blue": "#00BFFF",
+                        "neon-magenta": "#FF00FF",
+                        "cyber-green": "#00FF7F"
+                    },
+                    fontFamily: {
+                        "display": ["Orbitron", "sans-serif"],
+                        "body": ["Space Grotesk", "sans-serif"]
+                    },
+                    borderRadius: {
+                        "DEFAULT": "0.5rem",
+                        "lg": "1rem",
+                        "xl": "1.5rem",
+                        "full": "9999px"
+                    },
+                },
+            },
+        }
+    </script>
+    <style>
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        html {
+            scroll-behavior: smooth;
+        }
+
+        body {
+            overflow-x: hidden;
+        }
+
+        .glowing-card {
+            position: relative;
+            overflow: hidden;
+            transition: all 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
+            perspective: 1000px;
+            transform-style: preserve-3d;
+        }
+
+        .glowing-card:hover {
+            transform: translateY(-12px) rotateX(5deg) rotateY(-5deg) scale(1.02);
+            box-shadow: 0 25px 50px rgba(0, 191, 255, 0.2), 0 0 40px rgba(255, 0, 255, 0.15), inset 0 0 20px rgba(0, 191, 255, 0.1);
+        }
+
+        .glowing-card::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: conic-gradient(transparent, rgba(0, 191, 255, 0.4), rgba(255, 0, 255, 0.4), transparent);
+            animation: rotate 6s linear infinite;
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
+
+        .glowing-card:hover::before {
+            opacity: 1;
+        }
+
+        @keyframes rotate {
+            from {
+                transform: rotate(0deg);
+            }
+
+            to {
+                transform: rotate(360deg);
+            }
+        }
+
+        @keyframes float {
+
+            0%,
+            100% {
+                transform: translateY(0px) translateX(0px);
+            }
+
+            25% {
+                transform: translateY(-20px) translateX(10px);
+            }
+
+            50% {
+                transform: translateY(-40px) translateX(-10px);
+            }
+
+            75% {
+                transform: translateY(-20px) translateX(15px);
+            }
+        }
+
+        @keyframes pulse-glow {
+
+            0%,
+            100% {
+                box-shadow: 0 0 10px rgba(0, 191, 255, 0.5), inset 0 0 10px rgba(0, 191, 255, 0.2);
+            }
+
+            50% {
+                box-shadow: 0 0 30px rgba(0, 191, 255, 0.8), inset 0 0 20px rgba(0, 191, 255, 0.3);
+            }
+        }
+
+        @keyframes shimmer {
+            0% {
+                background-position: -1000px 0;
+            }
+
+            100% {
+                background-position: 1000px 0;
+            }
+        }
+
+        @keyframes float-particle {
+            0% {
+                opacity: 0;
+                transform: translateY(100vh) translateX(0);
+            }
+
+            10% {
+                opacity: 1;
+            }
+
+            90% {
+                opacity: 1;
+            }
+
+            100% {
+                opacity: 0;
+                transform: translateY(-100vh) translateX(100px);
+            }
+        }
+
+        @keyframes glow-pulse {
+
+            0%,
+            100% {
+                text-shadow: 0 0 10px rgba(0, 191, 255, 0.5);
+            }
+
+            50% {
+                text-shadow: 0 0 30px rgba(0, 191, 255, 1), 0 0 50px rgba(255, 0, 255, 0.5);
+            }
+        }
+
+        .glowing-card .card-content {
+            position: relative;
+            z-index: 1;
+            background: linear-gradient(135deg, #101020 0%, #1a1a35 100%);
+            border-radius: inherit;
+            padding: 2rem;
+            height: 100%;
+            transition: all 0.4s ease;
+        }
+
+        .glowing-card:hover .card-content {
+            background: linear-gradient(135deg, #151530 0%, #202050 100%);
+        }
+
+        .glowing-card::after {
+            content: '';
+            position: absolute;
+            top: 2px;
+            left: 2px;
+            right: 2px;
+            bottom: 2px;
+            background: linear-gradient(135deg, #101020 0%, #1a1a35 100%);
+            border-radius: inherit;
+            z-index: 0;
+        }
+
+        .neon-glow-button {
+            position: relative;
+            overflow: hidden;
+            transition: all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+        }
+
+        .neon-glow-button::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.3), transparent);
+            transition: left 0.6s;
+            z-index: 1;
+        }
+
+        .neon-glow-button:hover::before {
+            left: 100%;
+        }
+
+        .neon-glow-button:hover {
+            box-shadow: 0 0 15px #00BFFF, 0 0 25px #00BFFF, 0 0 40px #FF00FF;
+            transform: scale(1.05);
+        }
+
+        .neon-glow-button span {
+            position: relative;
+            z-index: 2;
+        }
+
+        .particle {
+            position: fixed;
+            pointer-events: none;
+            width: 4px;
+            height: 4px;
+            border-radius: 50%;
+            background: rgba(0, 191, 255, 0.8);
+            box-shadow: 0 0 10px rgba(0, 191, 255, 0.6);
+        }
+
+        #canvas-container {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: 1;
+        }
+
+        .hero-content {
+            position: relative;
+            z-index: 10;
+        }
+
+        .hero-title {
+            animation: glow-pulse 3s ease-in-out infinite;
+        }
+
+        .floating-card {
+            animation: float 6s ease-in-out infinite;
+        }
+
+        .text-shimmer {
+            background: linear-gradient(90deg, #fff, #00BFFF, #FF00FF, #fff);
+            background-size: 1000px 100%;
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            animation: shimmer 3s infinite;
+        }
+
+        .pulse-button {
+            animation: pulse-glow 2s ease-in-out infinite;
+        }
+
+        .glass-morphism {
+            background: rgba(16, 16, 32, 0.7);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(0, 191, 255, 0.1);
+        }
+
+        .service-card {
+            position: relative;
+            overflow: hidden;
+        }
+
+        .service-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: linear-gradient(135deg, rgba(0, 191, 255, 0.1) 0%, rgba(255, 0, 255, 0.1) 100%);
+            opacity: 0;
+            transition: opacity 0.3s ease;
+            z-index: 0;
+        }
+
+        .service-card:hover::before {
+            opacity: 1;
+        }
+
+        .scroll-reveal {
+            opacity: 0;
+            transform: translateY(30px);
+        }
+
+        .scroll-reveal.active {
+            animation: scrollReveal 0.8s ease forwards;
+        }
+
+        @keyframes scrollReveal {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .stat-number {
+            font-size: 2.5rem;
+            font-weight: 900;
+            background: linear-gradient(135deg, #00BFFF, #FF00FF);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .header-blur {
+            backdrop-filter: blur(10px);
+            background: rgba(10, 10, 26, 0.8);
+            border-bottom: 1px solid rgba(0, 191, 255, 0.1);
+        }
+
+        nav a {
+            position: relative;
+            transition: color 0.3s ease;
+        }
+
+        nav a::after {
+            content: '';
+            position: absolute;
+            bottom: -5px;
+            left: 0;
+            width: 0;
+            height: 2px;
+            background: linear-gradient(90deg, #00BFFF, #FF00FF);
+            transition: width 0.3s ease;
+        }
+
+        nav a:hover::after {
+            width: 100%;
+        }
+
+        .platform-card {
+            transition: all 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
+        }
+
+        .platform-card:hover {
+            transform: translateY(-10px) rotateY(-10deg);
+            box-shadow: 0 20px 40px rgba(0, 191, 255, 0.2);
+        }
+
+        /* 3D Tilt Effect */
+        .tilt-card {
+            transform-style: preserve-3d;
+            transition: all 0.5s ease;
+        }
+
+        .tilt-card:hover {
+            transform: perspective(1000px) rotateX(var(--tilt-x, 0deg)) rotateY(var(--tilt-y, 0deg)) scale3d(1.05, 1.05, 1.05);
+        }
+
+        /* Animated gradient background */
+        @keyframes gradient-shift {
+            0% {
+                background-position: 0% 50%;
+            }
+
+            50% {
+                background-position: 100% 50%;
+            }
+
+            100% {
+                background-position: 0% 50%;
+            }
+        }
+
+        .animated-gradient {
+            background: linear-gradient(45deg, #00BFFF, #FF00FF, #00FF7F, #00BFFF);
+            background-size: 400% 400%;
+            animation: gradient-shift 15s ease infinite;
+        }
+
+        /* 3D Flip Card */
+        .flip-card {
+            perspective: 1000px;
+            height: 100%;
+        }
+
+        .flip-card-inner {
+            position: relative;
+            width: 100%;
+            height: 100%;
+            transition: transform 0.8s;
+            transform-style: preserve-3d;
+        }
+
+        .flip-card:hover .flip-card-inner {
+            transform: rotateY(180deg);
+        }
+
+        .flip-card-front,
+        .flip-card-back {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            backface-visibility: hidden;
+            border-radius: 1rem;
+        }
+
+        .flip-card-back {
+            transform: rotateY(180deg);
+        }
+
+        /* Ripple effect */
+        @keyframes ripple {
+            0% {
+                transform: scale(0);
+                opacity: 1;
+            }
+
+            100% {
+                transform: scale(4);
+                opacity: 0;
+            }
+        }
+
+        /* Parallax layers */
+        .parallax-layer {
+            transition: transform 0.3s ease-out;
+        }
+
+        /* Enhanced mobile responsiveness */
+        @media (max-width: 768px) {
+            .glowing-card:hover {
+                transform: translateY(-8px) scale(1.01);
+            }
+
+            .platform-card:hover {
+                transform: translateY(-5px);
+            }
+        }
+
+        /* Loading animation */
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .fade-in-up {
+            animation: fadeInUp 0.8s ease-out forwards;
+        }
+
+        /* Magnetic button effect */
+        .magnetic-button {
+            position: relative;
+            transition: transform 0.3s ease;
+        }
+
+        /* Holographic effect */
+        .holographic {
+            position: relative;
+            background: linear-gradient(45deg,
+                    rgba(0, 191, 255, 0.1),
+                    rgba(255, 0, 255, 0.1),
+                    rgba(0, 255, 127, 0.1));
+            background-size: 200% 200%;
+            animation: holographic-shift 3s ease infinite;
+        }
+
+        @keyframes holographic-shift {
+            0% {
+                background-position: 0% 50%;
+            }
+
+            50% {
+                background-position: 100% 50%;
+            }
+
+            100% {
+                background-position: 0% 50%;
+            }
+        }
+
+        /* Glitch effect */
+        @keyframes glitch {
+            0% {
+                transform: translate(0);
+            }
+
+            20% {
+                transform: translate(-2px, 2px);
+            }
+
+            40% {
+                transform: translate(-2px, -2px);
+            }
+
+            60% {
+                transform: translate(2px, 2px);
+            }
+
+            80% {
+                transform: translate(2px, -2px);
+            }
+
+            100% {
+                transform: translate(0);
+            }
+        }
+
+        .glitch:hover {
+            animation: glitch 0.3s ease;
+        }
+
+        /* Neon text glow */
+        .neon-text {
+            text-shadow:
+                0 0 10px rgba(0, 191, 255, 0.8),
+                0 0 20px rgba(0, 191, 255, 0.6),
+                0 0 30px rgba(0, 191, 255, 0.4),
+                0 0 40px rgba(255, 0, 255, 0.4);
+        }
+
+        /* Floating animation for hero elements */
+        @keyframes float-smooth {
+
+            0%,
+            100% {
+                transform: translateY(0px);
+            }
+
+            50% {
+                transform: translateY(-20px);
+            }
+        }
+
+        .float-smooth {
+            animation: float-smooth 4s ease-in-out infinite;
+        }
+
+        /* 3D card stack effect */
+        .card-stack {
+            transform-style: preserve-3d;
+        }
+
+        .card-stack>* {
+            transition: transform 0.5s ease;
+        }
+
+        .card-stack:hover>*:nth-child(1) {
+            transform: translateZ(30px);
+        }
+
+        .card-stack:hover>*:nth-child(2) {
+            transform: translateZ(20px);
+        }
+
+        .card-stack:hover>*:nth-child(3) {
+            transform: translateZ(10px);
+        }
+    </style>
+</head>
+
+<body class="bg-background-dark text-white font-body overflow-x-hidden">
+    <div class="relative flex min-h-screen w-full flex-col overflow-x-hidden">
+        <header class="header-blur fixed top-0 left-0 right-0 z-50 px-4 sm:px-6 lg:px-8 py-4">
+            <div class="max-w-7xl mx-auto flex items-center justify-between">
+                <a href="#hero" class="flex items-center gap-4 group cursor-pointer">
+                    <img src="logo.svg" alt="Quantivision Logo"
+                        class="w-10 h-10 transition-all group-hover:scale-110 group-hover:rotate-6 duration-500 drop-shadow-lg hover:drop-shadow-2xl"
+                        style="filter: drop-shadow(0 0 10px rgba(0, 191, 255, 0.5)); animation: float-smooth 3s ease-in-out infinite;" />
+                    <h2
+                        class="text-white text-xl font-bold font-display tracking-wide hover:text-primary transition-colors">
+                        Quantivision</h2>
+                </a>
+                <nav class="hidden md:flex flex-1 justify-center gap-8 items-center">
+                    <a class="text-white/80 hover:text-primary text-sm font-medium leading-normal transition-all duration-300 hover:scale-110 relative group"
+                        href="#about">
+                        About
+                        <span
+                            class="absolute -bottom-1 left-0 w-0 h-0.5 bg-gradient-to-r from-primary to-purple-400 transition-all duration-300 group-hover:w-full"></span>
+                    </a>
+                    <a class="text-white/80 hover:text-primary text-sm font-medium leading-normal transition-all duration-300 hover:scale-110 relative group"
+                        href="#services">
+                        Services
+                        <span
+                            class="absolute -bottom-1 left-0 w-0 h-0.5 bg-gradient-to-r from-primary to-purple-400 transition-all duration-300 group-hover:w-full"></span>
+                    </a>
+                    <a class="text-white/80 hover:text-primary text-sm font-medium leading-normal transition-all duration-300 hover:scale-110 relative group"
+                        href="#platforms">
+                        Platforms
+                        <span
+                            class="absolute -bottom-1 left-0 w-0 h-0.5 bg-gradient-to-r from-primary to-purple-400 transition-all duration-300 group-hover:w-full"></span>
+                    </a>
+                    <a class="text-white/80 hover:text-primary text-sm font-medium leading-normal transition-all duration-300 hover:scale-110 relative group"
+                        href="#cta-banner">
+                        Contact
+                        <span
+                            class="absolute -bottom-1 left-0 w-0 h-0.5 bg-gradient-to-r from-primary to-purple-400 transition-all duration-300 group-hover:w-full"></span>
+                    </a>
+                </nav>
+                <div class="flex items-center gap-4">
+                    <button
+                        class="hidden md:flex min-w-[84px] max-w-[480px] cursor-pointer items-center justify-center overflow-hidden rounded-lg h-10 px-6 bg-primary text-background-dark text-sm font-bold leading-normal tracking-wide transition-all neon-glow-button magnetic-button">
+                        <span class="truncate">Get a Demo</span>
+                    </button>
+                    <button
+                        class="md:hidden flex items-center justify-center h-10 w-10 text-white hover:text-primary transition-all duration-300 hover:scale-110 hover:rotate-90">
+                        <span class="material-symbols-outlined">menu</span>
+                    </button>
+                </div>
+            </div>
+        </header>
+        <main class="flex-grow">
+            <!-- Hero Section with 3D Canvas -->
+            <section class="relative min-h-screen flex items-center justify-center text-center overflow-hidden pt-20"
+                id="hero">
+                <div id="canvas-container" class="absolute inset-0"></div>
+                <canvas id="threejs-canvas" class="absolute inset-0 w-full h-full"></canvas>
+
+                <div class="hero-content px-4 max-w-6xl mx-auto relative z-10">
+                    <!-- Hero Logo -->
+                    <div class="mb-12 fade-in-up flex justify-center">
+                        <img src="logo.svg" alt="Quantivision"
+                            class="w-40 h-40 md:w-48 md:h-48 opacity-90 hover:opacity-100 transition-all duration-500 hover:scale-110"
+                            style="filter: drop-shadow(0 0 30px rgba(0, 191, 255, 0.6)) drop-shadow(0 0 60px rgba(0, 191, 255, 0.3)); animation: float-smooth 4s ease-in-out infinite;" />
+                    </div>
+                    <h1 class="hero-title text-6xl md:text-8xl font-bold leading-tight tracking-tight uppercase font-display mb-6 neon-text fade-in-up"
+                        style="animation-delay: 0.1s;">
+                        Quantivision
+                    </h1>
+                    <p class="text-2xl md:text-3xl text-transparent bg-clip-text bg-gradient-to-r from-primary via-cyan-400 to-purple-400 font-bold mb-6 fade-in-up animated-gradient"
+                        style="animation-delay: 0.2s;">
+                        Powering the Future of Intelligent Systems
+                    </p>
+                    <p class="text-white/90 text-lg md:text-xl font-normal leading-relaxed mt-6 max-w-3xl mx-auto font-body fade-in-up"
+                        style="animation-delay: 0.3s;">
+                        Integrating advanced AI with IoT to create smarter, more connected environments. Transform your
+                        industry with cutting-edge technology.
+                    </p>
+                    <div class="flex flex-wrap gap-6 justify-center mt-14 fade-in-up" style="animation-delay: 0.4s;">
+                        <button
+                            class="flex min-w-[160px] cursor-pointer items-center justify-center overflow-hidden rounded-xl h-14 px-10 bg-primary text-background-dark text-base font-bold leading-normal tracking-wide transition-all neon-glow-button magnetic-button hover:shadow-2xl group">
+                            <span class="truncate flex items-center gap-2">
+                                Explore Our Services
+                                <svg class="w-5 h-5 transition-transform group-hover:translate-x-1" fill="none"
+                                    stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                        d="M13 7l5 5m0 0l-5 5m5-5H6"></path>
+                                </svg>
+                            </span>
+                        </button>
+                        <button
+                            class="flex min-w-[160px] cursor-pointer items-center justify-center overflow-hidden rounded-xl h-14 px-10 glass-morphism text-white text-base font-bold leading-normal tracking-wide hover:border-primary/50 transition-all hover:scale-105 group">
+                            <span class="truncate flex items-center gap-2">
+                                Get a Demo
+                                <svg class="w-5 h-5 transition-transform group-hover:rotate-45" fill="none"
+                                    stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                        d="M14 5l7 7m0 0l-7 7m7-7H3"></path>
+                                </svg>
+                            </span>
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Scroll Indicator -->
+                <div
+                    class="absolute bottom-10 left-1/2 transform -translate-x-1/2 z-20 animate-bounce cursor-pointer hover:scale-110 transition-transform">
+                    <svg class="w-8 h-8 text-primary" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                            d="M19 14l-7 7m0 0l-7-7m7 7V3"></path>
+                    </svg>
+                </div>
+            </section>
+            <!-- About Section -->
+            <section class="py-20 sm:py-32" id="about">
+                <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+                    <div class="grid md:grid-cols-2 gap-16 items-center">
+                        <div class="text-center md:text-left scroll-reveal">
+                            <div class="inline-block md:block mb-4">
+                                <span
+                                    class="text-primary text-sm font-bold tracking-widest uppercase bg-primary/10 px-4 py-2 rounded-full border border-primary/30">
+                                    01 • About Us
+                                </span>
+                            </div>
+                            <h2
+                                class="text-5xl md:text-6xl font-bold font-display uppercase tracking-wider text-white mt-6 glitch">
+                                About <span
+                                    class="text-transparent bg-clip-text bg-gradient-to-r from-primary via-cyan-400 to-purple-400 animated-gradient">Quantivision</span>
+                            </h2>
+                            <div class="w-20 h-1 bg-gradient-to-r from-primary to-purple-400 mt-6 mb-6 mx-auto md:mx-0">
+                            </div>
+                            <p class="text-white/90 text-lg leading-relaxed mt-6 font-body">
+                                Quantivision is on a mission to build the most advanced AI and IoT solutions to power
+                                the future of intelligent systems. We believe in creating a world where technology works
+                                for humanity, making our environments smarter, more efficient, and more connected.
+                            </p>
+                            <p class="text-white/80 text-base leading-relaxed mt-4 font-body">
+                                With over a decade of expertise in machine learning, data science, and IoT
+                                infrastructure, we deliver transformative solutions that redefine industries.
+                            </p>
+                            <div class="grid grid-cols-2 gap-4 mt-10">
+                                <div class="flex flex-col gap-2 rounded-2xl p-6 glass-morphism hover:border-primary/50 transition-all cursor-pointer scroll-reveal tilt-card group"
+                                    style="animation-delay: 0.1s">
+                                    <p class="stat-number text-4xl mb-2 group-hover:scale-110 transition-transform">1B+
+                                    </p>
+                                    <p class="text-white/70 text-sm font-medium leading-normal">Data Points Analyzed
+                                    </p>
+                                </div>
+                                <div class="flex flex-col gap-2 rounded-2xl p-6 glass-morphism hover:border-primary/50 transition-all cursor-pointer scroll-reveal tilt-card group"
+                                    style="animation-delay: 0.2s">
+                                    <p class="stat-number text-4xl mb-2 group-hover:scale-110 transition-transform">30%
+                                    </p>
+                                    <p class="text-white/70 text-sm font-medium leading-normal">Efficiency Gained</p>
+                                </div>
+                                <div class="flex flex-col gap-2 rounded-2xl p-6 glass-morphism hover:border-primary/50 transition-all cursor-pointer scroll-reveal tilt-card group"
+                                    style="animation-delay: 0.3s">
+                                    <p class="stat-number text-4xl mb-2 group-hover:scale-110 transition-transform">500+
+                                    </p>
+                                    <p class="text-white/70 text-sm font-medium leading-normal">Projects Delivered</p>
+                                </div>
+                                <div class="flex flex-col gap-2 rounded-2xl p-6 glass-morphism hover:border-primary/50 transition-all cursor-pointer scroll-reveal tilt-card group"
+                                    style="animation-delay: 0.4s">
+                                    <p class="stat-number text-4xl mb-2 group-hover:scale-110 transition-transform">24/7
+                                    </p>
+                                    <p class="text-white/70 text-sm font-medium leading-normal">Support Available</p>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="scroll-reveal relative flex items-center justify-center"
+                            style="animation-delay: 0.2s">
+                            <div class="relative group tilt-card">
+                                <div
+                                    class="absolute inset-0 bg-gradient-to-r from-primary via-purple-400 to-cyan-400 rounded-full blur-3xl opacity-50 group-hover:opacity-80 transition-all duration-500 animate-pulse">
+                                </div>
+                                <div
+                                    class="absolute -inset-8 bg-gradient-to-r from-primary to-purple-400 rounded-full opacity-20 group-hover:opacity-40 transition-all duration-300 blur-2xl">
+                                </div>
+                                <img src="logo.svg" alt="Quantivision Logo"
+                                    class="w-80 h-80 md:w-96 md:h-96 relative z-10 hover:scale-110 transition-transform duration-500 opacity-90 hover:opacity-100"
+                                    style="filter: drop-shadow(0 0 40px rgba(0, 191, 255, 0.8)) drop-shadow(0 0 80px rgba(0, 191, 255, 0.4)); animation: float-smooth 5s ease-in-out infinite;" />
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+            <!-- Services Section -->
+            <section class="py-20 sm:py-32 relative overflow-hidden" id="services">
+                <div class="absolute inset-0 overflow-hidden pointer-events-none">
+                    <div
+                        class="absolute w-96 h-96 bg-primary/10 rounded-full blur-3xl -top-20 -left-20 opacity-30 animate-pulse">
+                    </div>
+                    <div class="absolute w-96 h-96 bg-purple-400/10 rounded-full blur-3xl -bottom-20 -right-20 opacity-30 animate-pulse"
+                        style="animation-delay: 1s;">
+                    </div>
+                    <div class="absolute w-96 h-96 bg-cyan-400/10 rounded-full blur-3xl top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 opacity-20 animate-pulse"
+                        style="animation-delay: 2s;">
+                    </div>
+                </div>
+                <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center relative z-10">
+                    <div class="scroll-reveal">
+                        <span
+                            class="text-primary text-sm font-bold tracking-widest uppercase bg-primary/10 px-4 py-2 rounded-full border border-primary/30 inline-block">
+                            02 • Services
+                        </span>
+                        <h2
+                            class="text-5xl md:text-6xl font-bold font-display uppercase tracking-wider text-white mt-6">
+                            Core <span
+                                class="text-transparent bg-clip-text bg-gradient-to-r from-primary via-cyan-400 to-purple-400 animated-gradient">Services</span>
+                        </h2>
+                        <div class="w-20 h-1 bg-gradient-to-r from-primary to-purple-400 mt-6 mb-6 mx-auto"></div>
+                    </div>
+                    <p class="text-white/90 text-lg mt-6 max-w-3xl mx-auto font-body scroll-reveal"
+                        style="animation-delay: 0.1s">We provide a suite of services designed to unlock the full
+                        potential of your data and infrastructure across key industries.</p>
+                    <div class="grid sm:grid-cols-2 lg:grid-cols-4 gap-8 mt-16">
+                        <div class="glowing-card rounded-2xl scroll-reveal group" style="animation-delay: 0.1s">
+                            <div class="card-content text-left h-full flex flex-col">
+                                <div
+                                    class="inline-flex items-center justify-center w-16 h-16 rounded-xl bg-gradient-to-br from-electric-blue to-cyan-500 mb-6 group-hover:scale-110 group-hover:rotate-6 transition-all duration-300 float-smooth">
+                                    <span class="material-symbols-outlined text-white text-3xl">apartment</span>
+                                </div>
+                                <h3
+                                    class="text-2xl font-bold font-display text-white mb-3 group-hover:text-primary transition-colors">
+                                    PropertyTech</h3>
+                                <p class="text-white/80 mt-auto font-body text-sm leading-relaxed">AI-driven solutions
+                                    for
+                                    smart buildings, optimizing energy, security, and facility management.</p>
+                                <div
+                                    class="mt-4 flex items-center text-primary text-sm font-semibold group-hover:translate-x-2 transition-transform">
+                                    Learn More
+                                    <svg class="w-4 h-4 ml-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                            d="M9 5l7 7-7 7"></path>
+                                    </svg>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="glowing-card rounded-2xl scroll-reveal group" style="animation-delay: 0.2s">
+                            <div class="card-content text-left h-full flex flex-col">
+                                <div class="inline-flex items-center justify-center w-16 h-16 rounded-xl bg-gradient-to-br from-neon-magenta to-pink-500 mb-6 group-hover:scale-110 group-hover:rotate-6 transition-all duration-300 float-smooth"
+                                    style="animation-delay: 0.5s;">
+                                    <span class="material-symbols-outlined text-white text-3xl">sensors</span>
+                                </div>
+                                <h3
+                                    class="text-2xl font-bold font-display text-white mb-3 group-hover:text-neon-magenta transition-colors">
+                                    IoT Solutions</h3>
+                                <p class="text-white/80 mt-auto font-body text-sm leading-relaxed">End-to-end IoT
+                                    platforms
+                                    for device connectivity, data collection, and real-time control.</p>
+                                <div
+                                    class="mt-4 flex items-center text-neon-magenta text-sm font-semibold group-hover:translate-x-2 transition-transform">
+                                    Learn More
+                                    <svg class="w-4 h-4 ml-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                            d="M9 5l7 7-7 7"></path>
+                                    </svg>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="glowing-card rounded-2xl scroll-reveal group" style="animation-delay: 0.3s">
+                            <div class="card-content text-left h-full flex flex-col">
+                                <div class="inline-flex items-center justify-center w-16 h-16 rounded-xl bg-gradient-to-br from-cyber-green to-emerald-500 mb-6 group-hover:scale-110 group-hover:rotate-6 transition-all duration-300 float-smooth"
+                                    style="animation-delay: 1s;">
+                                    <span class="material-symbols-outlined text-white text-3xl">monitoring</span>
+                                </div>
+                                <h3
+                                    class="text-2xl font-bold font-display text-white mb-3 group-hover:text-cyber-green transition-colors">
+                                    FinTech</h3>
+                                <p class="text-white/80 mt-auto font-body text-sm leading-relaxed">Algorithmic trading,
+                                    fraud detection, and risk management powered by machine learning.</p>
+                                <div
+                                    class="mt-4 flex items-center text-cyber-green text-sm font-semibold group-hover:translate-x-2 transition-transform">
+                                    Learn More
+                                    <svg class="w-4 h-4 ml-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                            d="M9 5l7 7-7 7"></path>
+                                    </svg>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="glowing-card rounded-2xl scroll-reveal group" style="animation-delay: 0.4s">
+                            <div class="card-content text-left h-full flex flex-col">
+                                <div class="inline-flex items-center justify-center w-16 h-16 rounded-xl bg-gradient-to-br from-electric-blue to-violet-500 mb-6 group-hover:scale-110 group-hover:rotate-6 transition-all duration-300 float-smooth"
+                                    style="animation-delay: 1.5s;">
+                                    <span class="material-symbols-outlined text-white text-3xl">biotech</span>
+                                </div>
+                                <h3
+                                    class="text-2xl font-bold font-display text-white mb-3 group-hover:text-violet-400 transition-colors">
+                                    Medical AI</h3>
+                                <p class="text-white/80 mt-auto font-body text-sm leading-relaxed">Advanced AI for
+                                    diagnosing diseases from medical scans with superhuman accuracy.</p>
+                                <div
+                                    class="mt-4 flex items-center text-violet-400 text-sm font-semibold group-hover:translate-x-2 transition-transform">
+                                    Learn More
+                                    <svg class="w-4 h-4 ml-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                            d="M9 5l7 7-7 7"></path>
+                                    </svg>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+            <!-- Platforms Section -->
+            <section class="py-20 sm:py-32 bg-gradient-to-b from-transparent via-primary/5 to-transparent"
+                id="platforms">
+                <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+                    <div class="text-center scroll-reveal">
+                        <span
+                            class="text-primary text-sm font-bold tracking-widest uppercase bg-primary/10 px-4 py-2 rounded-full border border-primary/30 inline-block">
+                            03 • Platforms
+                        </span>
+                        <h2
+                            class="text-5xl md:text-6xl font-bold font-display uppercase tracking-wider text-white mt-6">
+                            Featured <span
+                                class="text-transparent bg-clip-text bg-gradient-to-r from-primary via-cyan-400 to-purple-400 animated-gradient">Platforms</span>
+                        </h2>
+                        <div class="w-20 h-1 bg-gradient-to-r from-primary to-purple-400 mt-6 mb-6 mx-auto"></div>
+                    </div>
+                    <div class="mt-16 flex gap-8 overflow-x-auto pb-8 snap-x snap-mandatory scrollbar-hide"
+                        style="scroll-behavior: smooth; scrollbar-width: none;">
+                        <div class="snap-center flex-shrink-0 w-80 md:w-96 glass-morphism rounded-2xl p-8 hover:border-primary/50 transition-all platform-card scroll-reveal tilt-card group"
+                            style="animation-delay: 0.1s">
+                            <div class="relative mb-6 overflow-hidden rounded-xl">
+                                <div
+                                    class="absolute inset-0 bg-gradient-to-br from-primary/30 to-transparent opacity-0 group-hover:opacity-100 transition-all z-20 duration-500">
+                                </div>
+                                <div
+                                    class="absolute inset-0 bg-gradient-to-br from-primary to-purple-400 blur-xl opacity-0 group-hover:opacity-30 transition-all duration-500">
+                                </div>
+                                <img class="rounded-xl w-full h-56 object-cover group-hover:scale-110 transition-transform duration-500 relative z-10"
+                                    data-alt="Platform 1 dashboard view"
+                                    src="https://lh3.googleusercontent.com/aida-public/AB6AXuBlq_cWmXlsww64ZW_Vs52PtmQ9-F7fSY__87v96jXgKbcqxaWSm6T01prRQYIZj5LlAKyM8okeK-zYrx9_YG4wa6x7QAlMX5Nf7JwgfaVFevNrgS5t4loSgIXTKr_EeBvtprcoh75x6iSr6iqg6XZ01r51EyfmSkKaZgAnUde5KWtGU4FTjx0F7cqW06H04kGwEhBIBN1jSeC113yftuI8qgzt3cWBdaiAVq2dIVWplFasM72qhWM9x7TFXVhu1T3xGZJGA4Dshg" />
+                            </div>
+                            <h3
+                                class="text-3xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-primary via-cyan-400 to-purple-400 font-display animated-gradient mb-3">
+                                Synapse</h3>
+                            <p class="text-white/80 text-base leading-relaxed mb-4">Our central AI core for real-time
+                                data
+                                processing, model training, and intelligent automation at scale.</p>
+                            <button
+                                class="mt-4 px-6 py-3 bg-primary/20 hover:bg-primary/40 text-primary rounded-xl text-sm font-semibold transition-all group-hover:scale-105 flex items-center gap-2 group-hover:gap-3">
+                                Learn More
+                                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                        d="M13 7l5 5m0 0l-5 5m5-5H6"></path>
+                                </svg>
+                            </button>
+                        </div>
+                        <div class="snap-center flex-shrink-0 w-80 md:w-96 glass-morphism rounded-2xl p-8 hover:border-primary/50 transition-all platform-card scroll-reveal tilt-card group"
+                            style="animation-delay: 0.2s">
+                            <div class="relative mb-6 overflow-hidden rounded-xl">
+                                <div
+                                    class="absolute inset-0 bg-gradient-to-br from-purple-400/30 to-transparent opacity-0 group-hover:opacity-100 transition-all z-20 duration-500">
+                                </div>
+                                <div
+                                    class="absolute inset-0 bg-gradient-to-br from-purple-400 to-pink-500 blur-xl opacity-0 group-hover:opacity-30 transition-all duration-500">
+                                </div>
+                                <img class="rounded-xl w-full h-56 object-cover group-hover:scale-110 transition-transform duration-500 relative z-10"
+                                    data-alt="Platform 2 interface screenshot"
+                                    src="https://lh3.googleusercontent.com/aida-public/AB6AXuDahq1RMBzxGgqBnOiNtJlOGO5ckOSoxq6klXnZTUwhfuSX8seq-dyueBPLOOeQUN6jV2tCXt70E95VKAEsMQAB_KTiHgymcotlYOoLtOSMM61XxrxsI6q7Vn90j6AU_EPb_quENIbcvRjAx7g6XLlzBFw4jXDVBLt1z-wojMN3tiMQ1PXW0xDYDCKSKaOFyWnHrj1oeDbxGrU4NXbrx0Aql93i_9EwTle2HTgKe7vbjHgmDTZ0BXV7IGSkj6SbVP94NkFy0z3unw" />
+                            </div>
+                            <h3
+                                class="text-3xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-purple-400 via-pink-400 to-primary font-display animated-gradient mb-3">
+                                Nexus</h3>
+                            <p class="text-white/80 text-base leading-relaxed mb-4">The ultimate IoT device management
+                                and
+                                connectivity platform for seamless integration and control.</p>
+                            <button
+                                class="mt-4 px-6 py-3 bg-purple-400/20 hover:bg-purple-400/40 text-purple-400 rounded-xl text-sm font-semibold transition-all group-hover:scale-105 flex items-center gap-2 group-hover:gap-3">
+                                Learn More
+                                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                        d="M13 7l5 5m0 0l-5 5m5-5H6"></path>
+                                </svg>
+                            </button>
+                        </div>
+                        <div class="snap-center flex-shrink-0 w-80 md:w-96 glass-morphism rounded-2xl p-8 hover:border-primary/50 transition-all platform-card scroll-reveal tilt-card group"
+                            style="animation-delay: 0.3s">
+                            <div class="relative mb-6 overflow-hidden rounded-xl">
+                                <div
+                                    class="absolute inset-0 bg-gradient-to-br from-cyber-green/30 to-transparent opacity-0 group-hover:opacity-100 transition-all z-20 duration-500">
+                                </div>
+                                <div
+                                    class="absolute inset-0 bg-gradient-to-br from-cyber-green to-emerald-500 blur-xl opacity-0 group-hover:opacity-30 transition-all duration-500">
+                                </div>
+                                <img class="rounded-xl w-full h-56 object-cover group-hover:scale-110 transition-transform duration-500 relative z-10"
+                                    data-alt="Platform 3 visualization example"
+                                    src="https://lh3.googleusercontent.com/aida-public/AB6AXuBQmqvgoFCTWZ7pD6wqPCPvALmyTzOZMPkTDoeJxH-0P8HjVdwfXo3ZvaFxjvd0LenAbGK4YoPrn00xPA5LqYf0YQNAUs5nYxJADsc0uHuMEpmIkZrk8KRDYdnXtJdAcbkbD1n06o6CxLZjSsGor88nbBDJjGF2OjMEkJMI6iDszT5OC59EyLSi9alGKOFWaacm7pMEDq3PdNCDOngrHydb5kSJ8qYW_8zHi78IzGnRT-hv6L0a1XdWnuKHYmTu_VjrhXRnL4bp-A" />
+                            </div>
+                            <h3
+                                class="text-3xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-cyber-green via-emerald-400 to-primary font-display animated-gradient mb-3">
+                                Oracle</h3>
+                            <p class="text-white/80 text-base leading-relaxed mb-4">A powerful predictive analytics
+                                suite
+                                for business intelligence and strategic decision making.</p>
+                            <button
+                                class="mt-4 px-6 py-3 bg-cyber-green/20 hover:bg-cyber-green/40 text-cyber-green rounded-xl text-sm font-semibold transition-all group-hover:scale-105 flex items-center gap-2 group-hover:gap-3">
+                                Learn More
+                                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                        d="M13 7l5 5m0 0l-5 5m5-5H6"></path>
+                                </svg>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </section>
+            <!-- CTA Banner Section -->
+            <section class="py-20 sm:py-32 relative overflow-hidden" id="cta-banner">
+                <div class="absolute inset-0 overflow-hidden pointer-events-none">
+                    <div class="absolute w-96 h-96 bg-primary/20 rounded-full blur-3xl animate-pulse -top-20 left-1/4">
+                    </div>
+                    <div class="absolute w-96 h-96 bg-purple-400/20 rounded-full blur-3xl animate-pulse -bottom-20 right-1/4"
+                        style="animation-delay: 1s;"></div>
+                    <div class="absolute w-96 h-96 bg-cyan-400/20 rounded-full blur-3xl animate-pulse top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2"
+                        style="animation-delay: 2s;"></div>
+                </div>
+                <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
+                    <div class="rounded-3xl p-12 md:p-24 text-center relative overflow-hidden group tilt-card"
+                        style="background: linear-gradient(135deg, rgba(0, 191, 255, 0.15) 0%, rgba(255, 0, 255, 0.15) 50%, rgba(0, 255, 127, 0.15) 100%); border: 2px solid rgba(0, 191, 255, 0.3); backdrop-filter: blur(10px);">
+                        <div class="absolute inset-0 opacity-10 group-hover:opacity-20 transition-opacity"
+                            style="background: url('data:image/svg+xml,<svg width=%22100%22 height=%22100%22 xmlns=%22http://www.w3.org/2000/svg%22><defs><pattern id=%22grid%22 width=%2220%22 height=%2220%22 patternUnits=%22userSpaceOnUse%22><path d=%22M 20 0 L 0 0 0 20%22 fill=%22none%22 stroke=%22white%22 stroke-width=%220.5%22/></pattern></defs><rect width=%22100%25%22 height=%22100%25%22 fill=%22url(%23grid)%22/></svg>');">
+                        </div>
+                        <div
+                            class="absolute inset-0 bg-gradient-to-r from-primary via-purple-400 to-cyan-400 opacity-0 group-hover:opacity-10 transition-all duration-500 blur-2xl">
+                        </div>
+                        <div class="relative z-10">
+                            <div class="inline-block mb-6">
+                                <span
+                                    class="text-primary text-sm font-bold tracking-widest uppercase bg-primary/20 px-6 py-3 rounded-full border border-primary/40 inline-flex items-center gap-2">
+                                    <span class="animate-pulse">⚡</span>
+                                    Let's Get Started
+                                </span>
+                            </div>
+                            <h2
+                                class="text-4xl md:text-6xl font-bold font-display uppercase tracking-wider text-white drop-shadow-2xl neon-text mb-6">
+                                Ready to Revolutionize Your Industry?</h2>
+                            <div
+                                class="w-20 h-1 bg-gradient-to-r from-primary via-purple-400 to-cyan-400 mt-6 mb-8 mx-auto animate-pulse">
+                            </div>
+                            <p
+                                class="text-white/95 mt-6 max-w-3xl mx-auto font-body text-xl drop-shadow-lg leading-relaxed">
+                                Let's build
+                                the future together. Contact us for a personalized consultation and demo of our
+                                cutting-edge
+                                solutions.</p>
+                            <div class="flex flex-wrap gap-6 justify-center mt-12">
+                                <button
+                                    class="flex min-w-[180px] cursor-pointer items-center justify-center overflow-hidden rounded-xl h-16 px-10 bg-white text-background-dark text-lg font-bold leading-normal tracking-wide hover:bg-gray-100 transition-all neon-glow-button pulse-button hover:scale-105 group">
+                                    <span class="truncate flex items-center gap-2">
+                                        Get a Demo Now
+                                        <svg class="w-5 h-5 transition-transform group-hover:translate-x-1" fill="none"
+                                            stroke="currentColor" viewBox="0 0 24 24">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                                d="M13 7l5 5m0 0l-5 5m5-5H6"></path>
+                                        </svg>
+                                    </span>
+                                </button>
+                                <button
+                                    class="flex min-w-[180px] cursor-pointer items-center justify-center overflow-hidden rounded-xl h-16 px-10 bg-transparent border-2 border-white text-white text-lg font-bold leading-normal tracking-wide hover:bg-white hover:text-background-dark transition-all hover:scale-105 group">
+                                    <span class="truncate flex items-center gap-2">
+                                        Contact Sales
+                                        <svg class="w-5 h-5 transition-transform group-hover:rotate-45" fill="none"
+                                            stroke="currentColor" viewBox="0 0 24 24">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                                d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z">
+                                            </path>
+                                        </svg>
+                                    </span>
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+        </main>
+        <footer class="bg-black/60 backdrop-blur-md border-t border-primary/10 py-16 relative overflow-hidden">
+            <div class="absolute inset-0 bg-gradient-to-t from-primary/5 to-transparent pointer-events-none"></div>
+            <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
+                <div class="grid md:grid-cols-4 gap-12 text-white/70 mb-12">
+                    <div>
+                        <a href="#hero" class="flex items-center gap-3 mb-6 group cursor-pointer">
+                            <img src="logo.svg" alt="Quantivision Logo"
+                                class="w-12 h-12 transition-all group-hover:scale-110 group-hover:rotate-6 duration-500"
+                                style="filter: drop-shadow(0 0 10px rgba(0, 191, 255, 0.5));" />
+                            <h3
+                                class="font-bold text-white text-xl font-display group-hover:text-primary transition-colors">
+                                Quantivision</h3>
+                        </a>
+                        <p class="text-sm leading-relaxed text-white/80 mb-4">Powering the Future of Intelligent Systems
+                            with cutting-edge
+                            AI and IoT technology.</p>
+                        <div class="flex gap-2 mt-4">
+                            <span
+                                class="px-3 py-1 bg-primary/10 text-primary text-xs rounded-full border border-primary/30">AI-Powered</span>
+                            <span
+                                class="px-3 py-1 bg-purple-400/10 text-purple-400 text-xs rounded-full border border-purple-400/30">IoT</span>
+                        </div>
+                    </div>
+                    <div>
+                        <h3 class="font-bold text-white text-lg font-display mb-4">Quick Links</h3>
+                        <ul class="space-y-2 text-sm">
+                            <li><a class="hover:text-primary transition-colors" href="#about">About Us</a></li>
+                            <li><a class="hover:text-primary transition-colors" href="#services">Services</a></li>
+                            <li><a class="hover:text-primary transition-colors" href="#platforms">Platforms</a></li>
+                            <li><a class="hover:text-primary transition-colors" href="#cta-banner">Contact</a></li>
+                        </ul>
+                    </div>
+                    <div>
+                        <h3 class="font-bold text-white text-lg font-display mb-4">Solutions</h3>
+                        <ul class="space-y-2 text-sm">
+                            <li><a class="hover:text-primary transition-colors" href="#">PropertyTech</a></li>
+                            <li><a class="hover:text-primary transition-colors" href="#">IoT Solutions</a></li>
+                            <li><a class="hover:text-primary transition-colors" href="#">FinTech</a></li>
+                            <li><a class="hover:text-primary transition-colors" href="#">Medical AI</a></li>
+                        </ul>
+                    </div>
+                    <div>
+                        <h3 class="font-bold text-white text-lg font-display mb-4">Connect</h3>
+                        <div class="flex gap-4 mb-4">
+                            <a class="hover:text-primary transition-colors" href="#"><svg aria-hidden="true"
+                                    class="w-5 h-5" fill="currentColor" viewBox="0 0 24 24">
+                                    <path clip-rule="evenodd"
+                                        d="M22 12c0-5.523-4.477-10-10-10S2 6.477 2 12c0 4.991 3.657 9.128 8.438 9.878v-6.987h-2.54V12h2.54V9.797c0-2.506 1.492-3.89 3.777-3.89 1.094 0 2.238.195 2.238.195v2.46h-1.26c-1.243 0-1.63.771-1.63 1.562V12h2.773l-.443 2.89h-2.33v6.988C18.343 21.128 22 16.991 22 12z"
+                                        fill-rule="evenodd"></path>
+                                </svg></a>
+                            <a class="hover:text-primary transition-colors" href="#"><svg aria-hidden="true"
+                                    class="w-5 h-5" fill="currentColor" viewBox="0 0 24 24">
+                                    <path
+                                        d="M8.29 20.251c7.547 0 11.675-6.253 11.675-11.675 0-.178 0-.355-.012-.53A8.348 8.348 0 0022 5.92a8.19 8.19 0 01-2.357.646 4.118 4.118 0 001.804-2.27 8.224 8.224 0 01-2.605.996 4.107 4.107 0 00-6.993 3.743 11.65 11.65 0 01-8.457-4.287 4.106 4.106 0 001.27 5.477A4.072 4.072 0 012.8 9.71v.052a4.105 4.105 0 003.292 4.022 4.095 4.095 0 01-1.853.07 4.108 4.108 0 003.834 2.85A8.233 8.233 0 012 18.407a11.616 11.616 0 006.29 1.84">
+                                    </path>
+                                </svg></a>
+                            <a class="hover:text-primary transition-colors" href="#"><svg aria-hidden="true"
+                                    class="w-5 h-5" fill="currentColor" viewBox="0 0 24 24">
+                                    <path clip-rule="evenodd"
+                                        d="M12 2C6.477 2 2 6.477 2 12.011c0 4.117 2.457 7.643 5.918 9.136.42.077.573-.182.573-.404 0-.199-.007-.723-.011-1.42-2.384.518-2.887-1.15-2.887-1.15-.382-.97-.932-1.228-.932-1.228-.763-.522.057-.512.057-.512.843.06 1.288.864 1.288.864.748 1.282 1.964.912 2.442.697.077-.542.292-.912.533-1.12-1.86-.213-3.817-.932-3.817-4.144 0-.916.327-1.665.864-2.252-.087-.213-.374-1.067.082-2.22 0 0 .703-.225 2.3.858a7.999 7.999 0 012.09-.282c.712.002 1.42.096 2.09.282 1.595-1.083 2.298-.858 2.298-.858.458 1.153.17 2.007.084 2.22.537.587.862 1.336.862 2.252 0 3.22-1.958 3.93-3.824 4.137.3.258.57.763.57 1.538 0 1.11-.01 2.007-.01 2.28 0 .223.15.487.576.403C19.546 19.652 22 16.127 22 12.01C22 6.477 17.523 2 12 2z"
+                                        fill-rule="evenodd"></path>
+                                </svg></a>
+                        </div>
+                        <p class="text-xs">📧 hello@quantivision.ai</p>
+                    </div>
+                </div>
+                <div class="border-t border-white/10 pt-8">
+                    <div class="flex flex-col md:flex-row justify-between items-center text-sm text-white/50 gap-4">
+                        <p>© 2024 Quantivision. All rights reserved.</p>
+                        <div class="flex gap-6">
+                            <a class="hover:text-white transition-colors" href="#">Privacy Policy</a>
+                            <a class="hover:text-white transition-colors" href="#">Terms of Service</a>
+                            <a class="hover:text-white transition-colors" href="#">Cookies</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </footer>
+    </div>
+
+    <script>
+        // Initialize GSAP ScrollTrigger
+        gsap.registerPlugin(ScrollTrigger);
+
+        // ========== 3D Canvas Setup with Three.js ==========
+        let scene, camera, renderer;
+        const canvas = document.getElementById('threejs-canvas');
+        let particles = [];
+        let group;
+
+        function initThreeJS() {
+            // Scene setup
+            scene = new THREE.Scene();
+            camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
+            renderer = new THREE.WebGLRenderer({ canvas: canvas, alpha: true, antialias: true });
+            renderer.setSize(window.innerWidth, window.innerHeight);
+            renderer.setClearColor(0x000000, 0);
+            renderer.outputColorSpace = THREE.SRGBColorSpace;
+            camera.position.z = 50;
+
+            // Create particle system
+            const geometry = new THREE.BufferGeometry();
+            const particleCount = 300; // Increased from 100 to 300
+            const positions = new Float32Array(particleCount * 3);
+
+            for (let i = 0; i < particleCount * 3; i += 3) {
+                positions[i] = (Math.random() - 0.5) * 300; // Increased spread
+                positions[i + 1] = (Math.random() - 0.5) * 300;
+                positions[i + 2] = (Math.random() - 0.5) * 300;
+            }
+
+            geometry.setAttribute('position', new THREE.BufferAttribute(positions, 3));
+
+            const material = new THREE.PointsMaterial({
+                color: 0x00BFFF,
+                size: 0.7, // Slightly larger for better visibility
+                sizeAttenuation: true,
+                transparent: true,
+                opacity: 0.7 // Slightly more visible
+            });
+
+            const particleSystem = new THREE.Points(geometry, material);
+            scene.add(particleSystem);
+
+            // Create floating spheres
+            for (let i = 0; i < 5; i++) {
+                const sphereGeometry = new THREE.SphereGeometry(2, 32, 32);
+                const sphereMaterial = new THREE.MeshPhongMaterial({
+                    color: i % 2 === 0 ? 0x00BFFF : 0xFF00FF,
+                    emissive: i % 2 === 0 ? 0x00BFFF : 0xFF00FF,
+                    transparent: true,
+                    opacity: 0.3
+                });
+                const sphere = new THREE.Mesh(sphereGeometry, sphereMaterial);
+
+                const angle = (i / 5) * Math.PI * 2;
+                sphere.position.x = Math.cos(angle) * 35;
+                sphere.position.y = Math.sin(angle) * 35;
+                sphere.position.z = Math.cos(angle * 2) * 20;
+
+                sphere.userData = { angle, distance: 35 };
+                scene.add(sphere);
+            }
+
+            // Lighting
+            const light = new THREE.PointLight(0x00BFFF, 1);
+            light.position.set(50, 50, 50);
+            scene.add(light);
+
+            const light2 = new THREE.PointLight(0xFF00FF, 0.5);
+            light2.position.set(-50, -50, 50);
+            scene.add(light2);
+
+            const ambientLight = new THREE.AmbientLight(0xffffff, 0.3);
+            scene.add(ambientLight);
+
+            // Animation loop
+            function animate() {
+                requestAnimationFrame(animate);
+
+                // Animate particles rotation
+                if (scene.children[0]) {
+                    scene.children[0].rotation.x += 0.0005;
+                    scene.children[0].rotation.y += 0.001;
+                }
+
+                // Animate spheres
+                scene.children.forEach((child, index) => {
+                    if (child.userData && child.userData.angle !== undefined) {
+                        child.userData.angle += 0.002;
+                        child.position.x = Math.cos(child.userData.angle) * child.userData.distance;
+                        child.position.y = Math.sin(child.userData.angle) * child.userData.distance;
+                        child.position.z = Math.cos(child.userData.angle * 2) * 20;
+                        child.rotation.x += 0.01;
+                        child.rotation.y += 0.01;
+                    }
+                });
+
+                renderer.render(scene, camera);
+            }
+
+            animate();
+
+            // Handle window resize
+            window.addEventListener('resize', () => {
+                camera.aspect = window.innerWidth / window.innerHeight;
+                camera.updateProjectionMatrix();
+                renderer.setSize(window.innerWidth, window.innerHeight);
+            });
+        }
+
+        // Initialize Three.js on page load
+        if (document.readyState === 'loading') {
+            document.addEventListener('DOMContentLoaded', initThreeJS);
+        } else {
+            initThreeJS();
+        }
+
+        // ========== Scroll Reveal Animation ==========
+        function revealOnScroll() {
+            const revealElements = document.querySelectorAll('.scroll-reveal');
+
+            revealElements.forEach((element) => {
+                const windowHeight = window.innerHeight;
+                const elementTop = element.getBoundingClientRect().top;
+                const elementVisible = 150;
+
+                if (elementTop < windowHeight - elementVisible) {
+                    element.classList.add('active');
+                }
+            });
+        }
+
+        window.addEventListener('scroll', revealOnScroll);
+        revealOnScroll(); // Initial check
+
+        // ========== Floating Particles Effect ==========
+        function createFloatingParticles() {
+            const container = document.body;
+
+            for (let i = 0; i < 50; i++) { // Increased from 20 to 50
+                const particle = document.createElement('div');
+                particle.className = 'particle';
+                particle.style.left = Math.random() * window.innerWidth + 'px';
+                particle.style.top = window.innerHeight + 'px';
+                particle.style.animationDuration = (3 + Math.random() * 4) + 's';
+                particle.style.animationDelay = Math.random() * 3 + 's'; // Increased delay range
+                particle.style.animation = `float-particle ${3 + Math.random() * 4}s linear infinite`;
+                container.appendChild(particle);
+            }
+        }
+
+        createFloatingParticles();
+
+        // ========== Smooth Scroll for Navigation ==========
+        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+            anchor.addEventListener('click', function (e) {
+                e.preventDefault();
+                const target = document.querySelector(this.getAttribute('href'));
+                if (target) {
+                    target.scrollIntoView({
+                        behavior: 'smooth',
+                        block: 'start'
+                    });
+                }
+            });
+        });
+
+        // ========== Header Blur on Scroll ==========
+        window.addEventListener('scroll', () => {
+            const header = document.querySelector('header');
+            if (window.scrollY > 50) {
+                header.style.boxShadow = '0 10px 40px rgba(0, 191, 255, 0.1)';
+            } else {
+                header.style.boxShadow = 'none';
+            }
+        });
+
+        // ========== Button Click Effects ==========
+        document.querySelectorAll('.neon-glow-button').forEach(button => {
+            button.addEventListener('click', function (e) {
+                // Ripple effect
+                const rect = button.getBoundingClientRect();
+                const ripple = document.createElement('span');
+                const size = Math.max(rect.width, rect.height);
+                const x = e.clientX - rect.left - size / 2;
+                const y = e.clientY - rect.top - size / 2;
+
+                ripple.style.width = ripple.style.height = size + 'px';
+                ripple.style.left = x + 'px';
+                ripple.style.top = y + 'px';
+                ripple.style.position = 'absolute';
+                ripple.style.borderRadius = '50%';
+                ripple.style.background = 'rgba(255, 255, 255, 0.6)';
+                ripple.style.pointerEvents = 'none';
+                ripple.style.animation = 'ripple 0.6s ease-out';
+
+                button.style.position = 'relative';
+                button.appendChild(ripple);
+
+                setTimeout(() => {
+                    ripple.remove();
+                }, 600);
+
+                // Button pulse effect
+                button.style.transform = 'scale(0.95)';
+                setTimeout(() => {
+                    button.style.transform = 'scale(1)';
+                }, 100);
+            });
+        });
+
+        // ========== Smooth Scroll Reveal with Intersection Observer ==========
+        const observerOptions = {
+            threshold: 0.1,
+            rootMargin: '0px 0px -100px 0px'
+        };
+
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.classList.add('active');
+                    observer.unobserve(entry.target);
+                }
+            });
+        }, observerOptions);
+
+        document.querySelectorAll('.scroll-reveal').forEach(element => {
+            observer.observe(element);
+        });
+
+        // ========== Mouse Move Parallax Effect ==========
+        document.addEventListener('mousemove', (e) => {
+            const { clientX, clientY } = e;
+            const centerX = window.innerWidth / 2;
+            const centerY = window.innerHeight / 2;
+            const distX = (clientX - centerX) / 50;
+            const distY = (clientY - centerY) / 50;
+
+            if (renderer && camera) {
+                camera.position.x = distX * 0.5;
+                camera.position.y = distY * 0.5;
+            }
+
+            // Parallax effect for hero content
+            const heroContent = document.querySelector('.hero-content');
+            if (heroContent) {
+                const moveX = (clientX - centerX) / 100;
+                const moveY = (clientY - centerY) / 100;
+                heroContent.style.transform = `translate(${moveX}px, ${moveY}px)`;
+            }
+        });
+
+        // ========== 3D Tilt Effect for Cards ==========
+        const tiltCards = document.querySelectorAll('.tilt-card');
+
+        tiltCards.forEach(card => {
+            card.addEventListener('mousemove', (e) => {
+                const rect = card.getBoundingClientRect();
+                const x = e.clientX - rect.left;
+                const y = e.clientY - rect.top;
+
+                const centerX = rect.width / 2;
+                const centerY = rect.height / 2;
+
+                const rotateX = ((y - centerY) / centerY) * 10;
+                const rotateY = ((x - centerX) / centerX) * 10;
+
+                card.style.setProperty('--tilt-x', `${-rotateX}deg`);
+                card.style.setProperty('--tilt-y', `${rotateY}deg`);
+            });
+
+            card.addEventListener('mouseleave', () => {
+                card.style.setProperty('--tilt-x', '0deg');
+                card.style.setProperty('--tilt-y', '0deg');
+            });
+        });
+
+        // ========== Magnetic Button Effect ==========
+        const magneticButtons = document.querySelectorAll('.magnetic-button');
+
+        magneticButtons.forEach(button => {
+            button.addEventListener('mousemove', (e) => {
+                const rect = button.getBoundingClientRect();
+                const x = e.clientX - rect.left - rect.width / 2;
+                const y = e.clientY - rect.top - rect.height / 2;
+
+                const distance = Math.sqrt(x * x + y * y);
+                const maxDistance = 50;
+
+                if (distance < maxDistance) {
+                    const strength = (maxDistance - distance) / maxDistance;
+                    button.style.transform = `translate(${x * strength * 0.3}px, ${y * strength * 0.3}px) scale(1.05)`;
+                }
+            });
+
+            button.addEventListener('mouseleave', () => {
+                button.style.transform = 'translate(0, 0) scale(1)';
+            });
+        });
+
+        // ========== Counter Animation ==========
+        function animateCounters() {
+            const statNumbers = document.querySelectorAll('.stat-number');
+
+            statNumbers.forEach(stat => {
+                const text = stat.textContent;
+                const hasPlus = text.includes('+');
+                const hasPercent = text.includes('%');
+                const number = parseFloat(text);
+
+                stat.textContent = '0';
+
+                gsap.to(stat, {
+                    scrollTrigger: {
+                        trigger: stat,
+                        start: 'top center+=100',
+                        once: true
+                    },
+                    duration: 2,
+                    textContent: number,
+                    ease: 'power2.out',
+                    snap: { textContent: text.includes('.') ? 0.1 : 1 },
+                    onUpdate: function () {
+                        let value = this.targets()[0].textContent;
+                        if (text.includes('B')) {
+                            value = parseFloat(value).toFixed(1) + 'B';
+                        } else if (hasPercent) {
+                            value = Math.round(value) + '%';
+                        } else if (hasPlus) {
+                            value = Math.round(value) + '+';
+                        } else if (text.includes('/')) {
+                            value = Math.round(value) + '/7';
+                        }
+                        this.targets()[0].textContent = value;
+                    }
+                });
+            });
+        }
+
+        animateCounters();
+
+        // ========== Cursor Trail Effect ==========
+        const cursorTrail = [];
+        const trailLength = 20;
+
+        document.addEventListener('mousemove', (e) => {
+            const trail = document.createElement('div');
+            trail.className = 'cursor-trail';
+            trail.style.left = e.clientX + 'px';
+            trail.style.top = e.clientY + 'px';
+            document.body.appendChild(trail);
+
+            cursorTrail.push(trail);
+
+            if (cursorTrail.length > trailLength) {
+                const oldTrail = cursorTrail.shift();
+                oldTrail.remove();
+            }
+
+            setTimeout(() => {
+                trail.style.opacity = '0';
+                setTimeout(() => trail.remove(), 500);
+            }, 100);
+        });
+
+        // ========== Enhance Three.js Scene ==========
+        function enhanceThreeJSScene() {
+            if (!scene) return;
+
+            // Animate on scroll
+            window.addEventListener('scroll', () => {
+                const scrollPercent = window.scrollY / (document.body.scrollHeight - window.innerHeight);
+                if (scene.children.length > 0) {
+                    scene.rotation.y = scrollPercent * Math.PI * 0.5; // Reduced rotation for subtlety
+                }
+            });
+        }
+
+        setTimeout(enhanceThreeJSScene, 1000);
+
+        // ========== Loading Animation ==========
+        window.addEventListener('load', () => {
+            document.querySelectorAll('.fade-in-up').forEach((element, index) => {
+                setTimeout(() => {
+                    element.style.opacity = '1';
+                    element.style.transform = 'translateY(0)';
+                }, index * 100);
+            });
+        });
+
+        // ========== Scroll Indicator Click ==========
+        document.querySelector('.animate-bounce')?.addEventListener('click', () => {
+            document.getElementById('about')?.scrollIntoView({ behavior: 'smooth' });
+        });
+
+        // ========== Platform Cards Horizontal Scroll Enhancement ==========
+        const platformsContainer = document.querySelector('#platforms .overflow-x-auto');
+        if (platformsContainer) {
+            let isDown = false;
+            let startX;
+            let scrollLeft;
+
+            platformsContainer.addEventListener('mousedown', (e) => {
+                isDown = true;
+                startX = e.pageX - platformsContainer.offsetLeft;
+                scrollLeft = platformsContainer.scrollLeft;
+                platformsContainer.style.cursor = 'grabbing';
+            });
+
+            platformsContainer.addEventListener('mouseleave', () => {
+                isDown = false;
+                platformsContainer.style.cursor = 'grab';
+            });
+
+            platformsContainer.addEventListener('mouseup', () => {
+                isDown = false;
+                platformsContainer.style.cursor = 'grab';
+            });
+
+            platformsContainer.addEventListener('mousemove', (e) => {
+                if (!isDown) return;
+                e.preventDefault();
+                const x = e.pageX - platformsContainer.offsetLeft;
+                const walk = (x - startX) * 2;
+                platformsContainer.scrollLeft = scrollLeft - walk;
+            });
+        }
+    </script>
+    <style>
+        .cursor-trail {
+            position: fixed;
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            background: radial-gradient(circle, rgba(0, 191, 255, 0.8), rgba(255, 0, 255, 0.4));
+            pointer-events: none;
+            z-index: 9999;
+            transform: translate(-50%, -50%);
+            transition: opacity 0.5s ease;
+            box-shadow: 0 0 10px rgba(0, 191, 255, 0.5);
+        }
+
+        .scrollbar-hide::-webkit-scrollbar {
+            display: none;
+        }
+
+        .scrollbar-hide {
+            -ms-overflow-style: none;
+            scrollbar-width: none;
+        }
+    </style>
+</body>
+
+</html>
