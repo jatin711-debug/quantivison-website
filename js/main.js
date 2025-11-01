@@ -1,64 +1,114 @@
 /**
  * Quantivision Landing Page - Main JavaScript
  * Advanced interactions, animations, and accessibility features
+ * Enhanced for optimal performance and smooth animations
  */
 
 // Global variables
 let scene, camera, renderer, animationId;
 let isAnimating = false;
+let perfMonitor = {
+    frameCount: 0,
+    lastTime: 0,
+    fps: 60,
+    adaptiveQuality: true
+};
 
-// Initialize application
+// Utility functions (defined first to avoid reference errors)
+function throttle(func, limit) {
+    let inThrottle;
+    return function () {
+        const args = arguments;
+        const context = this;
+        if (!inThrottle) {
+            func.apply(context, args);
+            inThrottle = true;
+            setTimeout(() => inThrottle = false, limit);
+        }
+    };
+}
+
+function debounce(func, wait, immediate) {
+    let timeout;
+    return function executedFunction(...args) {
+        const later = () => {
+            timeout = null;
+            if (!immediate) func(...args);
+        };
+        const callNow = immediate && !timeout;
+        clearTimeout(timeout);
+        timeout = setTimeout(later, wait);
+        if (callNow) func(...args);
+    };
+}
+
+// Enhanced RAF for better performance
+function requestIdleCallback(callback, options = {}) {
+    const timeout = options.timeout || 0;
+    const startTime = performance.now();
+
+    return setTimeout(() => {
+        callback({
+            didTimeout: false,
+            timeRemaining() {
+                return Math.max(0, 50 - (performance.now() - startTime));
+            }
+        });
+    }, 1);
+}
+
+// Initialize application with performance monitoring
 document.addEventListener('DOMContentLoaded', function () {
-    console.log('DOM Content Loaded - Starting initialization');
+    console.log('DOM Content Loaded - Starting optimized initialization');
 
-    try {
-        initializeNavigation();
-        console.log('✓ Navigation initialized');
-    } catch (e) {
-        console.error('Navigation error:', e);
-    }
-
-    try {
-        initializeCounterAnimations();
-        console.log('✓ Counters initialized');
-    } catch (e) {
-        console.error('Counter error:', e);
-    }
-
-    try {
-        initializeThreeJS();
-        console.log('✓ ThreeJS initialized');
-    } catch (e) {
-        console.error('ThreeJS error:', e);
-    }
-
-    try {
-        initializeGSAP();
-        console.log('✓ GSAP initialized');
-    } catch (e) {
-        console.error('GSAP error:', e);
-    }
-
-    try {
-        initializeScrollEffects();
-        console.log('✓ Scroll effects initialized');
-    } catch (e) {
-        console.error('Scroll effects error:', e);
-    }
-
-    try {
-        initializeAccessibility();
-        console.log('✓ Accessibility initialized');
-    } catch (e) {
-        console.error('Accessibility error:', e);
-    }
-
+    // Initialize critical performance optimizations first
     try {
         initializePerformanceOptimizations();
         console.log('✓ Performance optimizations initialized');
     } catch (e) {
         console.error('Performance error:', e);
     }
+
+    // Initialize core functionality
+    const initTasks = [
+        { fn: initializeNavigation, name: 'Navigation' },
+        { fn: initializeCounterAnimations, name: 'Counters' },
+        { fn: initializeThreeJS, name: 'ThreeJS' },
+        { fn: initializeGSAP, name: 'GSAP' },
+        { fn: initializeScrollEffects, name: 'Scroll effects' },
+        { fn: initializeAccessibility, name: 'Accessibility' }
+    ];
+
+    // Prioritized initialization using requestIdleCallback
+    function runNextTask() {
+        if (initTasks.length === 0) {
+            console.log('✅ All initialization tasks completed');
+            return;
+        }
+
+        const task = initTasks.shift();
+
+        requestIdleCallback((deadline) => {
+            try {
+                const start = performance.now();
+                task.fn();
+                const duration = performance.now() - start;
+                console.log(`✓ ${task.name} initialized (${duration.toFixed(2)}ms)`);
+            } catch (e) {
+                console.error(`${task.name} error:`, e);
+            }
+
+            // Continue with next task
+            if (deadline.timeRemaining() > 0 || deadline.didTimeout) {
+                runNextTask();
+            } else {
+                setTimeout(runNextTask, 16); // Next frame
+            }
+        }, { timeout: 1000 });
+    }
+
+    // Start initialization chain
+    runNextTask();
 });
 
 /**
@@ -581,34 +631,9 @@ function initializeAccessibility() {
  * Performance optimizations
  */
 function initializePerformanceOptimizations() {
-    // Debounce function for performance
-    function debounce(func, wait, immediate) {
-        let timeout;
-        return function executedFunction(...args) {
-            const later = () => {
-                timeout = null;
-                if (!immediate) func(...args);
-            };
-            const callNow = immediate && !timeout;
-            clearTimeout(timeout);
-            timeout = setTimeout(later, wait);
-            if (callNow) func(...args);
-        };
-    }
 
-    // Throttle function for scroll events
-    function throttle(func, limit) {
-        let inThrottle;
-        return function () {
-            const args = arguments;
-            const context = this;
-            if (!inThrottle) {
-                func.apply(context, args);
-                inThrottle = true;
-                setTimeout(() => inThrottle = false, limit);
-            }
-        };
-    }
+
+
 
     // Preload critical resources
     const criticalResources = [
